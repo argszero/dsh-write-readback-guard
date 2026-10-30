@@ -1,0 +1,68 @@
+{
+  "name": "@argszero/dsh-write-readback-guard",
+  "version": "0.1.0",
+  "description": "A host plugin for the harness's `write` and `edit` tools: after a call reports success, read the file back through the same `ctx.fs` the tool wrote through and compare it with the content the tool itself claimed (`result.value.after`). When the disk disagrees, the success is turned into a stated failure the model can act on instead of a silent one it cannot. Reported as discussion #11532: writes answering 'File created'/'updated successfully' while the file is unchanged, which the agent then reports upward as done. Fail-open by construction: an absent result, a binary or oversized file, an unreadable target and any call that already failed all pass through untouched and are counted, and a write that genuinely landed produces no output at all. Zero runtime dependencies; it changes no tool, no schema and no file.",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/types/**/*.d.ts",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/argszero/dsh-write-readback-guard.git"
+  },
+  "homepage": "https://github.com/argszero/dsh-write-readback-guard#readme",
+  "bugs": {
+    "url": "https://github.com/argszero/dsh-write-readback-guard/issues"
+  },
+  "keywords": [
+    "cordis",
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "tools",
+    "write",
+    "edit",
+    "readback",
+    "verification",
+    "silent-failure",
+    "fail-open"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "pretest": "tsc",
+    "test": "node --test \"test/*.spec.mjs\"",
+    "prepublishOnly": "tsc"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@deepseek-ai/dsh-fs": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-system-prompt": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-tool-fs": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.3",
+    "@types/node": "^24.19.1",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2 || >=4.0.5-alpha.1 <5",
+    "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

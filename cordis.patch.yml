@@ -1,0 +1,26 @@
+# The layer this bundle contributes: one row, the write read-back guard.
+#
+# It changes no tool and no schema. It listens on `tools/post-execute`, and
+# after a `write`/`edit` reports success it reads the file back through the same
+# `ctx.fs` the tool wrote through, comparing it with the content the tool itself
+# claimed. Where the disk disagrees, the success becomes a failure the model can
+# act on; where it agrees, the result is byte-for-byte unchanged.
+- insert:
+    - id: write-readback-guard
+      name: '@argszero/dsh-write-readback-guard'
+      config:
+        # `verify` (default) turns a disagreement into a failure; `observe`
+        # changes no result and only counts what `verify` would have caught;
+        # `off` mounts nothing.
+        mode: verify
+        # The tools whose successful results are tested. Both shipped mutation
+        # tools are covered by default; name others you trust the same claim from.
+        # tools: [write, edit]
+        # Largest file the guard will read back. A larger file is passed through
+        # and counted: an unread file is not evidence either way.
+        # maxBytes: 1048576
+        # Compare after collapsing CRLF, because the tools report LF-normalized
+        # content while the bytes on disk may not be.
+        # normalizeLineEndings: true
+        # Log each decision. Default true; set false for a silent mount.
+        # report: true
